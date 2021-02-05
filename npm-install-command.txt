@@ -1,0 +1,2 @@
+npm install body-parser cookie-parser cors crypto-js dotenv express express-flash express-session jsonwebtoken moment mongoose morgan passport passport-local swagger-jsdoc swagger-ui-express
+yarn add body-parser cookie-parser cors crypto-js dotenv express express-flash express-session jsonwebtoken moment mongoose morgan passport passport-local swagger-jsdoc swagger-ui-express
