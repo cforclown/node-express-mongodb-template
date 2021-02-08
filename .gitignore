@@ -1,5 +1,6 @@
 # visual-studio-code configuration
 .vscode/
+
 # API error log
 dump-log/
 
