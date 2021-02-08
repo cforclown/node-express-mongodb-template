@@ -6,11 +6,11 @@
     "author": "Hafis Alrizal",
     "license": "ISC",
     "scripts": {
-        "nodemon-dev": "set NODE_ENV=development && nodemon server.js",
-        "nodemon-dev-auth": "set NODE_ENV=development && nodemon auth-server.js",
-        "dev": "set NODE_ENV=development && node server.js",
-        "dev-auth": "set NODE_ENV=development && node server.js",
-        "prod": "set NODE_ENV=production && node auth-server.js",
+        "nodemon-dev": "set NODE_ENV=development&& nodemon server.js",
+        "nodemon-dev-auth": "set NODE_ENV=development&& nodemon auth-server.js",
+        "dev": "set NODE_ENV=development&& node server.js",
+        "dev-auth": "set NODE_ENV=development&& node server.js",
+        "prod": "set NODE_ENV=production&& node auth-server.js",
         "prod-auth": "set NODE_ENV=production&& node auth-server.js"
     },
     "dependencies": {

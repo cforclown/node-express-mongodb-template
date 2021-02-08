@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const roleSchema=require('../model/role.model').Schema
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -10,12 +9,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    nama: {
+    namaLengkap: {
         type: String,
         required: true,
     },
     role:{
-        type:roleSchema,
+        type:mongoose.Types.ObjectId,
         required:true,
         ref:'Role'
     }

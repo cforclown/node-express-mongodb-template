@@ -9,15 +9,16 @@ const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const expressFlash = require("express-flash");
 const cors = require("cors");
+const global = require("./global/global");
+
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
-const jwt = require('jsonwebtoken');
-const global = require("./global/global");
+const swaggerSchemas=require('./swagger-schemas');
+const swaggerPaths=require('./swagger-paths');
 
 require("./database/connection"); // START DB_CONNECTION
 
-const userRouter = require('./router/server/user')
-const roleRouter = require('./router/server/role')
+const apiRouter = require('./router/api/api');
 
 
 
@@ -30,10 +31,12 @@ const fs = require("fs");
 if (!fs.existsSync("./dump-log"))
     fs.mkdirSync("./dump-log");
 
+
+
 //#region ------------------------------CONFIG MIDDLEWARE---------------------------
 app.use(logger("dev"));
 app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
 // CORS
 app.use(cors({
@@ -58,7 +61,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 
 
-//#region ------------------------------SWAGGER CONFIG------------------------------
+//#region -------------------------------SWAGGER CONFIG-----------------------------
 // extended : https://swagger.io/specification/#infoObject
 const swaggerOptions = {
     definition: {
@@ -69,68 +72,16 @@ const swaggerOptions = {
             description: "API Documentation",
             contact: {
                 name: "Hafis Alrizal",
-                url: "https://ha-ha.tech",
+                url: "https://hafisalrizal.com",
                 email: "hafisalrizal@gmail.com",
             },
             servers: [`http://${config.SERVER_HOST}:${config.SERVER_PORT}`]
         },
-        consumes: [
-            "application/json"
-        ],
-        produces: [
-            "application/json"
-        ],
+        consumes: [ "application/json", ],
+        produces: [ "application/json", ],
         schemes: ["http", "https"],
         components: {
-            schemas:{
-                userData:{
-                    type: "object",
-                    properties:{
-                        userData:{
-                            type: "object",
-                            properties:{
-                                username: { type: "string", },
-                                password: { type: "string", },
-                                nama: { type: "string", },
-                                jabatanOrDepartment:{ type: "string", },
-                                perusahaan:{ type: "string", },
-                                email:{ type: "string", },
-                                telephone:{ type: "string", },
-                                role:{ type:"string", }
-                            },
-                        }
-                    },
-                },
-                roleData:{
-                    type: "object",
-                    properties:{
-                        roleData:{
-                            type: "object",
-                            properties:{
-                                nama: { type: "string", },
-                                user: {
-                                    type: "object",
-                                    properties:{
-                                        view:{ type: "boolean", },
-                                        create:{ type: "boolean", },
-                                        update:{ type: "boolean", },
-                                        delete:{ type: "boolean", },
-                                    }
-                                },
-                                masterData: {
-                                    type: "object",
-                                    properties:{
-                                        view:{ type: "boolean", },
-                                        create:{ type: "boolean", },
-                                        update:{ type: "boolean", },
-                                        delete:{ type: "boolean", },
-                                    }
-                                },
-                            }
-                        }
-                    }
-                },
-            },
+            schemas:swaggerSchemas,
             securitySchemes: {
                 Bearer: {
                     "type": "apiKey",
@@ -158,38 +109,13 @@ app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 
 
-//#region ---------------------------AUTHENTICATION MIDDLEWARE----------------------
-app.use(async (req, res, next) => {
-    try {
-        if (req.headers['authorization'] === undefined) return res.sendStatus(401)
+//#region -----------------------------------ROUTES---------------------------------
+app.use('/api', apiRouter);
 
-        const token = req.headers['authorization'].split(' ')[1]
-
-        jwt.verify(token, config.ACCESS_TOKEN_SECRET, (err, user) => {
-            // TOKEN NOT VALID
-            if (err)
-                return res.sendStatus(401)  
-            // ROLE USER TIDAK VALID
-            if(!user.role)
-                return res.status(403).send(global.Response(null, "User ini tidak mempunyai attribute Role"))
-
-            req.user = user
-
-            next()
-        })
-    }
-    catch (error) {
-        global.DumpError(error)
-        res.status(500).send(global.Response(null, error.message))
-    }
+// WEB PAGE
+app.get('/*', (req, res)=>{
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 })
-//#endregion -----------------------------------------------------------------------
-
-
-
-//#region -----------------------------------ROUTES HERE------------------------------
-app.use('/api/user', userRouter)
-app.use('/api/role', roleRouter)
 //#endregion -----------------------------------------------------------------------
 
 

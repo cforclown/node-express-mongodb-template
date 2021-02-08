@@ -1,70 +1,85 @@
 const mongoose = require("mongoose");
-const global = require('../../global/global')
+const global = require('../../global/global');
 
 
 
-const userModel = mongoose.model('User')
-const roleModel = mongoose.model('Role')
+const userModel = mongoose.model('User');
+const roleController = require('./role.controller');
 
 exports.authenticate = async function (username, password) {
-    const passwordHash=await global.Hash(password)
-    const user = await userModel.findOne({username:username, password:passwordHash}).exec();
-    if(!user) 
-        return null
-    const userData = { ...user._doc }
+    const passwordHash = await global.Hash(password)
+    const user = await userModel.findOne({
+        username: username,
+        password: passwordHash
+    }).populate('role').exec();
+
+    if (!user) return null
+
+    const userData = { ...user.toObject() }
     delete userData.password
+    
     return userData
 }
 exports.getUserList = async function () {
-    const userList = await userModel.find({})
-    return userList.map(user => {
-        const userData = { ...user._doc }
-        userData.role={
-            _id:user.role._id,
-            nama:user.role.nama,
-        }
-        delete userData.password
-        return userData
-    })
+    const userList = await userModel.find({}).select('-password').populate({
+        path: "role",
+        select: "_id nama",
+        model: "Role",
+    }).exec();
+
+    return userList.map(user => { return { ...user.toObject() } });
 }
+exports.findUser = async function (query) {
+    const userList = await userModel.find({
+        namaLengkap: { $regex: query, $options: "i" },
+    }).select('-password').populate({
+        path: "role",
+        select: "_id nama",
+        model: "Role",
+    });
+
+    return userList.map(user => { return { ...user.toObject() } });
+};
 exports.getUser = async function (userId) {
-    const user = await userModel.findById(userId).exec();
-    if(!user) 
+    const user = await userModel.findById(userId).select('-password').populate('role').exec();
+    if (!user)
         return null
-    const userData = { ...user._doc }
-    delete userData.password
-    return userData
+        
+    return { ...user.toObject() }
 }
 exports.getUserPermissions = async function (userId) {
-    const user = await userModel.findById(userId).exec();
-    if(!user) 
+    const user = await userModel.findById(userId).select('-password').populate('role').exec();
+    if (!user)
         return null
-    return { ...user.role._doc }
+
+    return { ...user.role.toObject() }
 }
 exports.createUser = async function (userData) {
-    const role=userData.role?userData.role:(await roleModel.findById(userData.roleId).exec())
-    if(!role)
-        throw Error("Data Role tidak valid")
+    const role = await roleController.getRole(userData.role);
+    if (!role)
+        throw Error("Role Id tidak valid")
+
     const userdocument = new userModel({
         ...userData,
         password: await global.Hash(userData.password),
         role: role,
     });
     await userdocument.save();
-    return userData;
+
+    return {
+        ...userData,
+        _id: userdocument._id,
+    };
 };
 exports.updateUser = async function (userData) {
-    const role=userData.role?userData.role:(await roleModel.findById(userData.roleId).exec())
-    if(!role)
-        throw Error("Data Role tidak valid")
+    const role = await roleController.getRole(userData.role);
+    if (!role)
+        throw Error("Role Id tidak valid");
+
     const res = await userModel.updateOne({ _id: userData._id }, {
         $set: {
-            nama: userData.nama,
-            jabatanOrDepartment: userData.jabatanOrDepartment?userData.jabatanOrDepartment:null,
-            perusahaan: userData.perusahaan?userData.perusahaan:null,
-            email: userData.email?userData.email:null,
-            telephone: userData.telephone?userData.telephone:null,
-            role: role,
+            namaLengkap: userData.namaLengkap,
+            role: userData.role,
         },
     }).exec();
 
@@ -75,7 +90,6 @@ exports.updateUser = async function (userData) {
 };
 exports.deleteUser = async function (userId) {
     const res = await userModel.deleteOne({ _id: userId }).exec();
-
     if (res.n === 0)
         throw Error("User tidak ditemukan");
 

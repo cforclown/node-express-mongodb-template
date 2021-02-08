@@ -16,6 +16,8 @@ exports.getTokenData=async function(refreshToken){
     }
 }
 exports.addToken=async function(userId, refreshToken){
+    await exports.deleteTokenByUserId(userId);
+    
     const token=new tokenModel({
         userId:userId,
         refreshToken:refreshToken
@@ -35,6 +37,10 @@ exports.updateToken=async function(refreshToken, userId, newRefreshToken){
         userId,
         refreshToken:newRefreshToken
     }
+}
+exports.deleteTokenByUserId=async function(userId){
+    await tokenModel.deleteMany({userId:userId}).exec();
+    return true
 }
 exports.deleteToken=async function(refreshToken){
     await tokenModel.findOneAndDelete({refreshToken:refreshToken})

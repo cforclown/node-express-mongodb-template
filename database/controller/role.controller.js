@@ -7,19 +7,19 @@ const roleModel = mongoose.model('Role')
 
 exports.getRoleList = async function () {
     const roleList = await roleModel.find({})
-    return roleList.map(role => {
-        return role._doc
-    })
+
+    return roleList.map(role => role.toObject() )
 }
 exports.getRole = async function (roleId) {
     const role = await roleModel.findById(roleId).exec();
-    if(!role) 
-        return null
-    return role._doc
+    if(!role) return null
+
+    return role.toObject();
 }
 exports.createRole = async function (roleData) {
     const roleDocument = new roleModel(roleData);
     await roleDocument.save();
+    
     return roleData;
 };
 exports.updateRole = async function (roleData) {
@@ -33,5 +33,6 @@ exports.deleteRole = async function (roleId) {
     const res = await roleModel.findOneAndDelete({ _id: roleId }).exec();
     if (res.n === 0)
         throw Error("Role tidak ditemukan");
+        
     return roleId;
 };

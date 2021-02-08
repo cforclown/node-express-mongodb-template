@@ -10,34 +10,34 @@ module.exports = {
 
     //#region ============================== SERVER =====================================
     SERVER_HOST: process.env.SERVER_HOST || '127.0.0.1',
-    SERVER_PORT: process.env.SERVER_PORT || 55522,
-    APP_HOST: process.env.APP_HOST || 'http://localhost:57575 http://localhost:75757',                  // array separate by space
+    SERVER_PORT: process.env.SERVER_PORT || 55555,
+    APP_HOST: process.env.APP_HOST || 'http://localhost:55555 http://localhost:75757',                  // array separate by space
     //#endregion ========================================================================
 
     //#region ============================ AUTH SERVER ==================================
     AUTH_SERVER_HOST: process.env.AUTH_SERVER_HOST || '127.0.0.1',
-    AUTH_SERVER_PORT: process.env.AUTH_SERVER_PORT || 52525,
-    AUTH_SERVER_APP: process.env.AUTH_SERVER_APP || 'http://localhost:57575 http://localhost:57575',    // array separate by space
+    AUTH_SERVER_PORT: process.env.AUTH_SERVER_PORT || 55522,
+    AUTH_SERVER_APP_HOST: process.env.AUTH_SERVER_APP_HOST || 'http://localhost:55555 http://localhost:55522 http://localhost:75757',    // array separate by space
     //#endregion ========================================================================
 
     //#region ============================= DATABASE ====================================
     DB_HOST: process.env.DB_HOST || '127.0.0.1',        // database host, default=localhost
     DB_PORT: process.env.DB_PORT || 27017,              // database port, default=mongodb default port
-    DB_USERNAME: process.env.DB_USERNAME || 'root',     // database username authentication, default=root
-    DB_PASSWORD: process.env.DB_PASSWORD || 'haha',     // database password authentication, default=haha
-    DB_NAME: process.env.DB_NAME || '<default-db-name>',// database name
+    DB_USERNAME: process.env.DB_USERNAME || '<db-username>',     // database username authentication, default=root
+    DB_PASSWORD: process.env.DB_PASSWORD || '<db-password>',     // database password authentication, default=haha
+    DB_NAME: process.env.DB_NAME || '<db-name>',// database name
     //#endregion ========================================================================
 
     //#region =========================== SESSION CONFIG ================================
-    SESSION_SECRET: process.env.SESSION_SECRET || '<default-session-secret>',
+    SESSION_SECRET: process.env.SESSION_SECRET || '<session-secret>',
     SESSION_RESAVE: process.env.SESSION_RESAVE || false,
     SESSION_SAVE_UNINITIALIZED: process.env.SESSION_SAVE_UNINITIALIZED || false,
     SESSION_COOKIE_MAX_AGE: process.env.SESSION_COOKIE_MAX_AGE || 3600,
     //#endregion ========================================================================
 
     //#region ============================ ACCESS TOKEN =================================
-    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || '<default-access-token-secret>',
-    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || '<default-refresh-token-secret>',
+    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || '<access-token-secret>',
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || '<refresh-token-refresh-secret>',
     ACCESS_TOKEN_EXP_IN: process.env.ACCESS_TOKEN_EXP_IN || 3600,
     //#endregion ========================================================================
 }
