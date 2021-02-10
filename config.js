@@ -11,13 +11,13 @@ module.exports = {
     //#region ============================== SERVER =====================================
     SERVER_HOST: process.env.SERVER_HOST || '127.0.0.1',
     SERVER_PORT: process.env.SERVER_PORT || 55555,
-    APP_HOST: process.env.APP_HOST || 'http://localhost:55555 http://localhost:75757',                  // array separate by space
+    APP_HOST: process.env.APP_HOST || 'http://localhost:55555 http://localhost:55577',                  // array separate by space
     //#endregion ========================================================================
 
     //#region ============================ AUTH SERVER ==================================
     AUTH_SERVER_HOST: process.env.AUTH_SERVER_HOST || '127.0.0.1',
     AUTH_SERVER_PORT: process.env.AUTH_SERVER_PORT || 55522,
-    AUTH_SERVER_APP_HOST: process.env.AUTH_SERVER_APP_HOST || 'http://localhost:55555 http://localhost:55522 http://localhost:75757',    // array separate by space
+    AUTH_SERVER_APP_HOST: process.env.AUTH_SERVER_APP_HOST || 'http://localhost:55555 http://localhost:55522 http://localhost:55577',    // array separate by space
     //#endregion ========================================================================
 
     //#region ============================= DATABASE ====================================
