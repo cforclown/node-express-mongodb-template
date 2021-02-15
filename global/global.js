@@ -1,4 +1,4 @@
-const fs = require('fs').promises
+const fs = require('fs');
 const moment=require('moment')
 const CryptoJS = require("crypto-js");
 const path=require('path')
@@ -7,6 +7,12 @@ const consoleOut = require('./console_out')
 exports.Response=function(data, errorMessage=null){
     return {
         data:data,
+        message:errorMessage,
+    }
+}
+exports.ErrorResponse=function(errorMessage=null){
+    return {
+        data:null,
         message:errorMessage,
     }
 }
@@ -38,9 +44,12 @@ exports.DumpError=function(_err, saveLog=true){
             ${_err.stack?_err.stack:''}
             ============================================
             `
+
             const filename=moment().format('DD MMMM YYYY')+'.txt';
-            fs.writeFile(path.join(__dirname, '../dump-log/'+filename), errorMessage)
-            .catch(error=>console.log(consoleOut.TextYellow, `FAILED_SAVING_ERROR_LOG: ${error.message}`))
+            fs.appendFile(path.join(__dirname, '../dump-log/'+filename), errorMessage, (err)=>{
+                if(err) console.log(consoleOut.TextError, err.message);
+                else    console.log(consoleOut.TextRed, 'Error saved');
+            })
         }
     }
     else {

@@ -101,7 +101,7 @@ const swaggerOptions = {
             Bearer: []
         },
     },
-    apis: ["server.js", './router/server/*.js'],
+    apis: ["server.js", './router/api/router/*.js'],
 }
 const swaggerDocs = swaggerJsDoc(swaggerOptions)
 app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
