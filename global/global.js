@@ -25,8 +25,21 @@ exports.ForbiddenResponse=function(){
 exports.OKResponse=function(){
     return exports.Response('OK', null)
 }
+exports.ErrorStatus=function(status, msg=null){
+    const err=new Error(msg?msg:'UNDEFINED ERROR');
+    err.status=status;
+    return err;
+}
+exports.ErrorBadRequest=function(msg){
+    return exports.ErrorStatus(400, msg);
+}
+exports.ErrorDataNotFound=function(msg){
+    return exports.ErrorStatus(404, msg?msg:'Data not found');
+}
 exports.DumpError=function(_err, saveLog=true){
-    console.log(consoleOut.TextError, '===================================');
+    if(require('../config').NODE_ENV==='test') return;
+    
+    console.log(consoleOut.TextError, '======================================================================');
     if (typeof _err === 'object') {
         console.log(consoleOut.TextYellow, `MESSAGE: ${_err.message?_err.message:''}`)
         if (_err.codeMessage)
@@ -55,7 +68,16 @@ exports.DumpError=function(_err, saveLog=true){
     else {
         console.log(consoleOut.TextError, 'dumpError : argument is not an object');
     }
-    console.log(consoleOut.TextError, '===================================')
+    console.log(consoleOut.TextError, '======================================================================')
+}
+exports.LogError=function(errText){
+    console.log(consoleOut.TextError, errText);
+}
+exports.LogBgGreen=function(text){
+    console.log(consoleOut.BgGreen, text);
+}
+exports.LogGreen=function(text){
+    console.log(consoleOut.TextGreen, text);
 }
 exports.Hash = async function (password) {
     return await CryptoJS.SHA512(password).toString(CryptoJS.enc.Hex)

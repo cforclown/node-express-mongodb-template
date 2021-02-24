@@ -6,6 +6,7 @@
     "author": "Hafis Alrizal",
     "license": "ISC",
     "scripts": {
+        "test": "mocha test/*.js --recursive --colors --exit --timeout 150000",
         "nodemon-dev": "set NODE_ENV=development&& nodemon server.js",
         "nodemon-dev-auth": "set NODE_ENV=development&& nodemon auth-server.js",
         "dev": "set NODE_ENV=development&& node server.js",
@@ -23,7 +24,9 @@
         "express": "^4.17.1",
         "express-flash": "0.0.2",
         "express-session": "^1.17.1",
+        "joi": "^17.4.0",
         "jsonwebtoken": "^8.5.1",
+        "mockgoose": "^8.0.4",
         "moment": "^2.29.0",
         "mongoose": "^5.10.7",
         "morgan": "^1.10.0",
@@ -36,5 +39,10 @@
         "nodejs",
         "express",
         "mongodb"
-    ]
+    ],
+    "devDependencies": {
+        "chai": "^4.3.0",
+        "mocha": "^8.3.0",
+        "supertest": "^6.1.3"
+    }
 }

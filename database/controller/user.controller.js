@@ -31,7 +31,7 @@ exports.getUserList = async function () {
 }
 exports.findUser = async function (query) {
     const userList = await userModel.find({
-        namaLengkap: { $regex: query, $options: "i" },
+        fullname: { $regex: query, $options: "i" },
     }).select('-password').populate({
         path: "role",
         select: "_id nama",
@@ -57,7 +57,7 @@ exports.getUserPermissions = async function (userId) {
 exports.createUser = async function (userData) {
     const role = await roleController.getRole(userData.role);
     if (!role)
-        throw Error("Role Id tidak valid")
+        throw global.ErrorBadRequest("DATA ROLE NOT FOUND");
 
     const userdocument = new userModel({
         ...userData,
@@ -66,32 +66,29 @@ exports.createUser = async function (userData) {
     });
     await userdocument.save();
 
-    return {
-        ...userData,
-        _id: userdocument._id,
-    };
+    return userdocument.toObject();
 };
 exports.updateUser = async function (userData) {
     const role = await roleController.getRole(userData.role);
     if (!role)
-        throw Error("Role Id tidak valid");
+        throw global.ErrorBadRequest("DATA ROLE NOT FOUND");
 
     const res = await userModel.updateOne({ _id: userData._id }, {
         $set: {
-            namaLengkap: userData.namaLengkap,
+            fullname: userData.fullname,
             role: userData.role,
         },
     }).exec();
 
     if (res.n === 0)
-        throw Error("User tidak ditemukan");
+        throw global.ErrorDataNotFound("DATA NOT FOUND");
 
     return userData;
 };
 exports.deleteUser = async function (userId) {
     const res = await userModel.deleteOne({ _id: userId }).exec();
     if (res.n === 0)
-        throw Error("User tidak ditemukan");
+        throw global.ErrorDataNotFound("DATA NOT FOUND");
 
     return userId;
 };

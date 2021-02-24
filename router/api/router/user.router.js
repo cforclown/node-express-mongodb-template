@@ -9,7 +9,9 @@ router.get('/', async (req, res) => {
         if (!req.user.role.user.view)
             return res.sendStatus(403)
 
-        const userList = (req.query.search && req.query.search!=='') ? await userController.findUser(req.query.search) : await userController.getUserList();
+        const userList = (req.query.search && req.query.search!=='') ? 
+                            await userController.findUser(req.query.search) : 
+                            await userController.getUserList();
         res.send(global.Response(userList))
     }
     catch (err) {
@@ -49,32 +51,28 @@ router.get('/permissions/:userId', async (req, res) => {
 })
 router.post('/', async (req, res) => {
     try {
-        if (!req.user.role.user.create)
-            return res.sendStatus(403)
-        if(!req.body.userData)
-            return res.status(400).send("Data User tidak ditemukan")
+        if (!req.user.role.user.create) return res.sendStatus(403);
+        if(!req.body.userData)          return res.status(400).send("Data User tidak ditemukan");
 
         const user = await userController.createUser(req.body.userData);
         res.send(global.Response(user));
     }
     catch (err) {
         global.DumpError(err)
-        res.status(500).send(global.Response(null, err.message))
+        res.status(err.status?err.status:500).send(global.ErrorResponse(err.message));
     }
 });
 router.put('/', async (req, res) => {
     try {
-        if (!req.user.role.user.update)
-            return res.sendStatus(403)
-        if(!req.body.userData)
-            return res.status(400).send("Data User tidak ditemukan")
+        if (!req.user.role.user.update) return res.sendStatus(403);
+        if(!req.body.userData)          return res.status(400).send("Data User tidak ditemukan");
 
         const user = await userController.updateUser(req.body.userData);
         res.send(global.Response(user));
     }
     catch (err) {
         global.DumpError(err)
-        res.status(500).send(global.Response(null, err.message))
+        res.status(err.status?err.status:500).send(global.ErrorResponse(err.message));
     }
 });
 router.delete('/:userId', async (req, res) => {
@@ -89,7 +87,7 @@ router.delete('/:userId', async (req, res) => {
     }
     catch (err) {
         global.DumpError(err)
-        res.status(500).send(global.Response(null, err.message))
+        res.status(err.status?err.status:500).send(global.ErrorResponse(err.message));
     }
 });
 

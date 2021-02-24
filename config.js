@@ -8,36 +8,36 @@ dotenv.config({
 module.exports = {
     NODE_ENV: process.env.NODE_ENV || 'development',
 
-    //#region ============================== SERVER =====================================
+    //#region ============================================ SERVER ============================================
     SERVER_HOST: process.env.SERVER_HOST || '127.0.0.1',
     SERVER_PORT: process.env.SERVER_PORT || 55555,
-    APP_HOST: process.env.APP_HOST || 'http://localhost:55555 http://localhost:55577',                  // array separate by space
-    //#endregion ========================================================================
+    APP_HOST: process.env.APP_HOST || 'http://localhost:55555 http://localhost:55522 http://localhost:55577',                  // array separate by space
+    //#endregion =============================================================================================
 
-    //#region ============================ AUTH SERVER ==================================
+    //#region ========================================== AUTH SERVER =========================================
     AUTH_SERVER_HOST: process.env.AUTH_SERVER_HOST || '127.0.0.1',
     AUTH_SERVER_PORT: process.env.AUTH_SERVER_PORT || 55522,
     AUTH_SERVER_APP_HOST: process.env.AUTH_SERVER_APP_HOST || 'http://localhost:55555 http://localhost:55522 http://localhost:55577',    // array separate by space
-    //#endregion ========================================================================
+    //#endregion =============================================================================================
 
-    //#region ============================= DATABASE ====================================
+    //#region =========================================== DATABASE ===========================================
     DB_HOST: process.env.DB_HOST || '127.0.0.1',        // database host, default=localhost
     DB_PORT: process.env.DB_PORT || 27017,              // database port, default=mongodb default port
     DB_USERNAME: process.env.DB_USERNAME || '<db-username>',     // database username authentication, default=root
     DB_PASSWORD: process.env.DB_PASSWORD || '<db-password>',     // database password authentication, default=haha
     DB_NAME: process.env.DB_NAME || '<db-name>',// database name
-    //#endregion ========================================================================
+    //#endregion =============================================================================================
 
-    //#region =========================== SESSION CONFIG ================================
+    //#region ======================================== SESSION CONFIG ========================================
     SESSION_SECRET: process.env.SESSION_SECRET || '<session-secret>',
     SESSION_RESAVE: process.env.SESSION_RESAVE || false,
     SESSION_SAVE_UNINITIALIZED: process.env.SESSION_SAVE_UNINITIALIZED || false,
     SESSION_COOKIE_MAX_AGE: process.env.SESSION_COOKIE_MAX_AGE || 3600,
-    //#endregion ========================================================================
+    //#endregion =============================================================================================
 
-    //#region ============================ ACCESS TOKEN =================================
+    //#region ========================================= ACCESS TOKEN =========================================
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || '<access-token-secret>',
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || '<refresh-token-refresh-secret>',
     ACCESS_TOKEN_EXP_IN: process.env.ACCESS_TOKEN_EXP_IN || 3600,
-    //#endregion ========================================================================
+    //#endregion =============================================================================================
 }

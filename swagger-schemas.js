@@ -19,7 +19,7 @@ module.exports={
                 type: "object",
                 properties:{
                     username: { type: "string", },
-                    namaLengkap: { type: "string", },
+                    fullname: { type: "string", },
                     role:{ type:"string", }
                 },
             }

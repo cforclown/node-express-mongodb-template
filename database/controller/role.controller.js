@@ -10,6 +10,16 @@ exports.getRoleList = async function () {
 
     return roleList.map(role => role.toObject() )
 }
+exports.findRole = async function (query) {
+    const roleList = await roleModel.find({
+        name: { 
+            $regex: query, 
+            $options: "i" 
+        },
+    });
+
+    return roleList.map(role => { return { ...role.toObject() } });
+};
 exports.getRole = async function (roleId) {
     const role = await roleModel.findById(roleId).exec();
     if(!role) return null
@@ -20,19 +30,19 @@ exports.createRole = async function (roleData) {
     const roleDocument = new roleModel(roleData);
     await roleDocument.save();
     
-    return roleData;
+    return roleDocument.toObject();
 };
 exports.updateRole = async function (roleData) {
-    const res = await roleModel.findOneAndUpdate({ _id: roleData._id }, roleData ).exec();
+    const res = await roleModel.updateOne({ _id: roleData._id }, roleData).exec();
     if (res.n === 0)
-        throw Error("Role tidak ditemukan");
+        throw global.ErrorDataNotFound("DATA NOT FOUND");
 
     return roleData;
 };
 exports.deleteRole = async function (roleId) {
     const res = await roleModel.findOneAndDelete({ _id: roleId }).exec();
     if (res.n === 0)
-        throw Error("Role tidak ditemukan");
+        throw global.ErrorDataNotFound("DATA NOT FOUND")
         
     return roleId;
 };

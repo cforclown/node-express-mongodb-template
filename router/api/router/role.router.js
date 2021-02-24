@@ -1,12 +1,14 @@
-const express = require('express')
-const global = require('../../../global/global')
-const roleController = require('../../../database/controller/role.controller')
+const express = require('express');
+const global = require('../../../global/global');
+const roleController = require('../../../database/controller/role.controller');
 
-const Router = express.Router()
+const Router = express.Router();
 
 Router.get('/', async (req, res) => {
     try {
-        const roleList = await roleController.getRoleList()
+        const roleList = (req.query.search && req.query.search.trim()!=='') ? 
+                            await roleController.findRole(req.query.search):
+                            await roleController.getRoleList();
         res.send(global.Response(roleList))
     }
     catch (err) {
@@ -34,12 +36,13 @@ Router.post('/', async (req, res) => {
             return res.sendStatus(403)
         if(!req.body.roleData)
             return res.status(400).send("Data Role tidak ditemukan")
+
         const role = await roleController.createRole(req.body.roleData);
         res.send(global.Response(role));
     }
     catch (err) {
         global.DumpError(err)
-        res.status(500).send(global.Response(null, err.message))
+        res.status(err.status?err.status:500).send(global.ErrorResponse(err.message));
     }
 });
 Router.put('/', async (req, res) => {
@@ -48,12 +51,13 @@ Router.put('/', async (req, res) => {
             return res.sendStatus(403)
         if(!req.body.roleData)
             return res.status(400).send("Data Role tidak ditemukan")
+
         const role = await roleController.updateRole(req.body.roleData);
         res.send(global.Response(role));
     }
     catch (err) {
         global.DumpError(err)
-        res.status(500).send(global.Response(null, err.message))
+        res.status(err.status?err.status:500).send(global.ErrorResponse(err.message));
     }
 });
 Router.delete('/:roleId', async (req, res) => {
@@ -67,7 +71,7 @@ Router.delete('/:roleId', async (req, res) => {
     }
     catch (err) {
         global.DumpError(err)
-        res.status(500).send(global.Response(null, err.message))
+        res.status(err.status?err.status:500).send(global.ErrorResponse(err.message));
     }
 });
 

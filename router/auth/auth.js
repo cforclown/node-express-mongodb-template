@@ -3,6 +3,7 @@ const express=require('express');
 const passport=require('passport');
 const jwt=require('jsonwebtoken');
 const global=require('../../global/global');
+const authenticate=require('../../database/controller/user.controller').authenticate;
 const tokenController=require('../../database/controller/token.controller');
 
 const router=express.Router()
@@ -20,11 +21,42 @@ router.post('/login', passport.authenticate("local", {
         failureFlash: true,
     })
 );
+router.post('/login/test', async (req, res)=>{       // LOGIN SUCCESS
+    try{
+        if(!req.body)                               return res.status(400).send(global.ErrorResponse("CREDENTIALS NOT FOUND"));
+        if(!req.body.username && !req.body.password)return res.status(400).send(global.ErrorResponse("CREDENTIALS NOT FOUND"));
+
+        const user=await authenticate(req.body.username, req.body.password);
+        if(!user)
+            return res.status(404).send(global.ErrorResponse("USER NOT FOUND"));
+
+        const userData={
+            userId:user._id,
+            fullname:user.fullname,
+            role:user.role,
+        }
+        const accessToken=jwt.sign(userData, config.ACCESS_TOKEN_SECRET, { 
+            expiresIn:`${accessTokenExpIn}s`
+        })
+        const refreshToken=jwt.sign(userData, config.REFRESH_TOKEN_SECRET, { 
+            expiresIn:`${refreshTokenExpIn}s`
+        })
+            
+        await tokenController.addToken(userData.userId, refreshToken)
+        startRemoveTokenTask(refreshToken)
+
+        res.send(global.Response(new TokenResponse(userData, accessToken, refreshToken)))
+    }
+    catch(error){
+        global.DumpError(error)
+        res.status(500).send(global.Response(null, error.message))
+    }
+})
 router.get('/login/verify', async (req, res)=>{       // LOGIN SUCCESS
     try{
         const userData={
             userId:req.user._id,
-            namaLengkap:req.user.namaLengkap,
+            fullname:req.user.fullname,
             role:req.user.role,
         }
         const accessToken=jwt.sign(userData, config.ACCESS_TOKEN_SECRET, { 
@@ -45,7 +77,7 @@ router.get('/login/verify', async (req, res)=>{       // LOGIN SUCCESS
     }
 })
 router.get('/login/error', async (req, res)=>{        // LOGIN FAILED
-    res.status(404).send(global.Response(null, 'Authentication error'))
+    res.status(404).send(global.Response(null, 'Authentication error'));
 })
 router.post('/refresh', async (req, res)=>{
     try{
@@ -58,7 +90,7 @@ router.post('/refresh', async (req, res)=>{
 
             const userData={
                 userId:user.userId,
-                namaLengkap:user.namaLengkap,
+                fullname:user.fullname,
                 role:user.role,
             }
             const accessToken=jwt.sign(userData, config.ACCESS_TOKEN_SECRET, { 
@@ -138,7 +170,7 @@ function stopRemoveTokenTask(refreshToken){
 function TokenResponse(_userData, _accessToken, _refreshToken){
     this.userData={
         userId:_userData.userId,
-        namaLengkap:_userData.namaLengkap,
+        fullname:_userData.fullname,
         role:{
             _id:_userData.role._id,
             nama:_userData.role.nama,
